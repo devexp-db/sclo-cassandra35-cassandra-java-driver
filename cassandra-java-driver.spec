@@ -1,6 +1,6 @@
 Name:          cassandra-java-driver
 Version:       3.0.0
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       DataStax Java Driver for Apache Cassandra
 License:       ASL 2.0
 URL:           https://github.com/datastax/java-driver
@@ -31,6 +31,8 @@ BuildRequires: mvn(org.slf4j:slf4j-log4j12)
 BuildRequires: mvn(org.sonatype.oss:oss-parent:pom:)
 BuildRequires: mvn(org.testng:testng)
 BuildRequires: mvn(org.xerial.snappy:snappy-java)
+# fedora 25
+BuildRequires: mvn(org.apache.felix:maven-bundle-plugin)
 
 BuildArch:     noarch
 
@@ -91,7 +93,7 @@ rm manual/object_mapper/.nav
 
 %build
 
-# Unavailable test dep org.scassandra:java-client:0.11.0 
+# Unavailable test dep org.cassandra:java-client:0.11.0 
 %mvn_build -fs
 
 %install
@@ -110,6 +112,9 @@ rm manual/object_mapper/.nav
 %license LICENSE
 
 %changelog
+* Tue Jun 21 2016 Tomas Repik <trepik@redhat.com> - 3.0.0-2
+- Added maven-bundle-plugin as a dependency
+
 * Thu Apr 07 2016 Tomas Repik <trepik@redhat.com> - 3.0.0-1
 - Initial RPM release
 
