@@ -1,0 +1,13 @@
+diff -urN java-driver-3.1.3/pom.xml java-driver-3.1.3new/pom.xml
+--- java-driver-3.1.3/pom.xml	2017-01-03 18:52:23.000000000 +0100
++++ java-driver-3.1.3new/pom.xml	2017-01-31 09:28:46.799262000 +0100
+@@ -229,6 +229,9 @@
+                 <inherited>true</inherited>
+                 <configuration>
+                     <verbose>false</verbose>
++    		    <additionalJOptions>
++       			<additionalJOption>--allow-script-in-comments </additionalJOption>
++    		    </additionalJOptions>
+                     <additionalparam>${javadoc.opts}</additionalparam>
+                     <!-- I can haz math in my javadoc (see http://zverovich.net/2012/01/14/beautiful-math-in-javadoc.html) -->
+                     <header>
