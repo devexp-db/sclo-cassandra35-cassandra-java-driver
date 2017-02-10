@@ -1,6 +1,6 @@
 Name:		cassandra-java-driver
 Version:	3.1.3
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	DataStax Java Driver for Apache Cassandra
 License:	ASL 2.0
 URL:		https://github.com/datastax/java-driver
@@ -142,6 +142,9 @@ rm manual/object_mapper/.nav
 %license LICENSE
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Mon Jan 30 2017 Tomas Repik <trepik@redhat.com> - 3.1.3-1
 - version update
 
