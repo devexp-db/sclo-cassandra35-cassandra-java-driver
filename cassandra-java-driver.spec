@@ -1,5 +1,5 @@
 Name:		cassandra-java-driver
-Version:	3.1.3
+Version:	3.1.4
 Release:	1%{?dist}
 Summary:	DataStax Java Driver for Apache Cassandra
 License:	ASL 2.0
@@ -11,15 +11,10 @@ Source0:	https://github.com/datastax/java-driver/archive/%{version}.tar.gz
 Patch0:		%{name}-%{version}-allow-script-in-comments.patch
 
 BuildRequires:	maven-local
-%if %{?fedora} <= 23
-BuildRequires:	mvn(com.codahale.metrics:metrics-core)
-%else
 BuildRequires:	mvn(io.dropwizard.metrics:metrics-core)
-%endif
 BuildRequires:	mvn(com.fasterxml.jackson.core:jackson-databind)
 BuildRequires:	mvn(com.google.guava:guava)
 BuildRequires:	mvn(io.netty:netty-handler)
-BuildRequires:	mvn(io.netty:netty-tcnative)
 BuildRequires:	mvn(io.netty:netty-transport-native-epoll)
 BuildRequires:	mvn(javax.json:javax.json-api)
 BuildRequires:	mvn(joda-time:joda-time)
@@ -27,7 +22,6 @@ BuildRequires:	mvn(log4j:log4j:1.2.17)
 BuildRequires:	mvn(net.jpountz.lz4:lz4)
 BuildRequires:	mvn(org.apache.commons:commons-exec)
 BuildRequires:	mvn(org.assertj:assertj-core)
-BuildRequires:	mvn(org.glassfish:javax.json)
 BuildRequires:	mvn(org.hdrhistogram:HdrHistogram)
 BuildRequires:	mvn(org.mockito:mockito-all)
 BuildRequires:	mvn(org.ow2.asm:asm-all)
@@ -108,10 +102,6 @@ This package contains javadoc for %{name}.
 # Disable shaded copy of netty artifacts
 %pom_remove_plugin -r :maven-shade-plugin driver-core
 
-%if %{?fedora} <= 23
-%pom_change_dep io.dropwizard.metrics: com.codahale.metrics:  driver-core
-%endif
-
 # remove hidden files from documentation
 rm manual/statements/.nav
 rm manual/object_mapper/.nav
@@ -120,7 +110,6 @@ rm manual/object_mapper/.nav
 %mvn_package ":cassandra-driver-tests-osgi" tests
 
 %build
-
 # Unavailable test dep org.cassandra:java-client:0.11.0 
 %mvn_build -fs
 
@@ -142,6 +131,9 @@ rm manual/object_mapper/.nav
 %license LICENSE
 
 %changelog
+* Fri Apr 07 2017 Tomas Repik <trepik@redhat.com> - 3.1.4-1
+- version update
+
 * Mon Jan 30 2017 Tomas Repik <trepik@redhat.com> - 3.1.3-1
 - version update
 
