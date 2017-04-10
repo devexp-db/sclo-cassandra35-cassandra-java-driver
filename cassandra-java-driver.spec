@@ -1,6 +1,9 @@
-Name:		cassandra-java-driver
+%{?scl:%scl_package cassandra-java-driver}
+%{!?scl:%global pkg_name %{name}}
+
+Name:		%{?scl_prefix}cassandra-java-driver
 Version:	3.1.4
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	DataStax Java Driver for Apache Cassandra
 License:	ASL 2.0
 URL:		https://github.com/datastax/java-driver
@@ -8,36 +11,54 @@ Source0:	https://github.com/datastax/java-driver/archive/%{version}.tar.gz
 
 # added --allow-script-in-comments option to javadoc plugin
 # https://bugzilla.redhat.com/show_bug.cgi?id=1417677
-Patch0:		%{name}-%{version}-allow-script-in-comments.patch
+Patch0:		%{pkg_name}-%{version}-allow-script-in-comments.patch
 
-BuildRequires:	maven-local
-BuildRequires:	mvn(io.dropwizard.metrics:metrics-core)
-BuildRequires:	mvn(com.fasterxml.jackson.core:jackson-databind)
-BuildRequires:	mvn(com.google.guava:guava)
-BuildRequires:	mvn(io.netty:netty-handler)
-BuildRequires:	mvn(io.netty:netty-transport-native-epoll)
-BuildRequires:	mvn(javax.json:javax.json-api)
-BuildRequires:	mvn(joda-time:joda-time)
-BuildRequires:	mvn(log4j:log4j:1.2.17)
-BuildRequires:	mvn(net.jpountz.lz4:lz4)
-BuildRequires:	mvn(org.apache.commons:commons-exec)
-BuildRequires:	mvn(org.assertj:assertj-core)
-BuildRequires:	mvn(org.hdrhistogram:HdrHistogram)
-BuildRequires:	mvn(org.mockito:mockito-all)
-BuildRequires:	mvn(org.ow2.asm:asm-all)
-BuildRequires:	mvn(org.slf4j:slf4j-log4j12)
-BuildRequires:	mvn(org.sonatype.oss:oss-parent:pom:)
-BuildRequires:	mvn(org.testng:testng)
-BuildRequires:	mvn(org.xerial.snappy:snappy-java)
-BuildRequires:	mvn(org.apache.felix:maven-bundle-plugin)
-BuildRequires:	mvn(com.github.jnr:jnr-ffi)
-BuildRequires:	mvn(com.github.jnr:jnr-posix)
-BuildRequires:	mvn(org.codehaus.mojo:build-helper-maven-plugin)
-BuildRequires:	mvn(org.apache.maven.plugins:maven-failsafe-plugin)
-BuildRequires:	mvn(org.apache.felix:org.apache.felix.framework)
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix}metrics
+BuildRequires:	%{?scl_prefix}jackson-databind
+BuildRequires:	%{?scl_prefix}guava
+BuildRequires:	%{?scl_prefix}netty
+BuildRequires:	%{?scl_prefix}jsonp
+BuildRequires:	%{?scl_prefix_maven}joda-time
+BuildRequires:	%{?scl_prefix}log4j
+BuildRequires:	%{?scl_prefix}lz4-java
+BuildRequires:	%{?scl_prefix_maven}apache-commons-exec
+BuildRequires:	%{?scl_prefix}assertj-core
+BuildRequires:	%{?scl_prefix}HdrHistogram
+BuildRequires:	%{?scl_prefix_maven}mockito
+BuildRequires:	%{?scl_prefix_java_common}objectweb-asm%{?scl:5}
+BuildRequires:	%{?scl_prefix}slf4j-log4j12
+BuildRequires:	%{?scl_prefix_maven}sonatype-oss-parent
+BuildRequires:	%{?scl_prefix_maven}testng
+BuildRequires:	%{?scl_prefix}snappy-java
+BuildRequires:	%{?scl_prefix_maven}maven-plugin-bundle
+BuildRequires:	%{?scl_prefix}jnr-ffi
+BuildRequires:	%{?scl_prefix}jnr-posix
+BuildRequires:	%{?scl_prefix_maven}maven-plugin-build-helper
+BuildRequires:	%{?scl_prefix_maven}maven-failsafe-plugin
+BuildRequires:	%{?scl_prefix_java_common}felix-framework
+# transitive dependencies
+%{?scl:
+BuildRequires:	%{?scl_prefix}jffi
+BuildRequires:	%{?scl_prefix}jffi-native
+BuildRequires:	%{?scl_prefix}jnr-x86asm
+BuildRequires:	%{?scl_prefix}jnr-constants
+BuildRequires:	%{?scl_prefix_java_common}javassist
+BuildRequires:	%{?scl_prefix}jctools
+BuildRequires:	%{?scl_prefix}disruptor
+BuildRequires:	%{?scl_prefix}jackson-core
+BuildRequires:	%{?scl_prefix}jackson-annotations
+BuildRequires:	%{?scl_prefix}jackson-dataformat-yaml
+BuildRequires:	%{?scl_prefix}jackson-dataformat-xml
+BuildRequires:	%{?scl_prefix}jackson-module-jaxb-annotations
+BuildRequires:	%{?scl_prefix_java_common}jansi
+BuildRequires:	%{?scl_prefix}jeromq
+BuildRequires:	%{?scl_prefix}apache-commons-csv
+}
 # driver-tests stress module dependencies
 #BuildRequires:	mvn(net.sf.jopt-simple:jopt-simple)
 #BuildRequires:	mvn(com.yammer.metrics:metrics-core) missing
+%{?scl:Requires: %scl_runtime}
 BuildArch:	noarch
 
 %description
@@ -81,8 +102,9 @@ This package contains javadoc for %{name}.
 %setup -qn java-driver-%{version}
 
 # allow-script-in-comments.patch
-%patch0 -p1
+%{!?scl:%patch0 -p1}
 
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 # Unneeded features
 %pom_disable_module driver-dist
 %pom_disable_module driver-examples
@@ -102,19 +124,24 @@ This package contains javadoc for %{name}.
 # Disable shaded copy of netty artifacts
 %pom_remove_plugin -r :maven-shade-plugin driver-core
 
+%mvn_package ":cassandra-driver-tests-parent" tests
+%mvn_package ":cassandra-driver-tests-osgi" tests
+%{?scl:EOF}
+
 # remove hidden files from documentation
 rm manual/statements/.nav
 rm manual/object_mapper/.nav
 
-%mvn_package ":cassandra-driver-tests-parent" tests
-%mvn_package ":cassandra-driver-tests-osgi" tests
-
 %build
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 # Unavailable test dep org.cassandra:java-client:0.11.0 
 %mvn_build -fs
+%{?scl:EOF}
 
 %install
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
+%{?scl:EOF}
 
 %files -f .mfiles-cassandra-driver-core
 %doc README.md changelog faq manual upgrade_guide
@@ -131,6 +158,9 @@ rm manual/object_mapper/.nav
 %license LICENSE
 
 %changelog
+* Mon Apr 10 2017 Tomas Repik <trepik@redhat.com> - 3.1.4-2
+- scl conversion
+
 * Fri Apr 07 2017 Tomas Repik <trepik@redhat.com> - 3.1.4-1
 - version update
 
