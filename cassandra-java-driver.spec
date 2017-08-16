@@ -37,6 +37,7 @@ BuildRequires:	%{?scl_prefix}jnr-posix
 BuildRequires:	%{?scl_prefix_maven}maven-plugin-build-helper
 BuildRequires:	%{?scl_prefix_maven}maven-failsafe-plugin
 BuildRequires:	%{?scl_prefix_java_common}felix-framework
+BuildRequires:	%{?scl_prefix}snakeyaml
 # transitive dependencies
 %{?scl:
 BuildRequires:	%{?scl_prefix}jffi
